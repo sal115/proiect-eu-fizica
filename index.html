@@ -2,142 +2,148 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fizica Pro - Scărița Completă</title>
+    <title>Master Scărița: Puzzle-ul Unităților Finale</title>
     <style>
-        :root { --primary: #2563eb; --accent: #f59e0b; --bg: #f1f5f9; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: #cbd5e1; display: flex; justify-content: center; padding: 20px; color: #1e293b; }
-        .container { background: var(--white); padding: 30px; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 100%; max-width: 900px; }
-        h1 { text-align: center; color: var(--primary); margin-bottom: 25px; font-size: 1.8rem; }
+        :root { --blue: #2563eb; --orange: #f59e0b; --green: #10b981; --bg: #f8fafc; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; color: #1e293b; }
+        .app { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 1100px; border: 4px solid var(--blue); }
         
-        .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; justify-content: center; }
-        .tab-btn { padding: 10px 15px; border: none; background: #e2e8f0; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
-        .tab-btn.active { background: var(--primary); color: white; transform: translateY(-2px); }
+        .tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+        .tab { padding: 10px 15px; border: none; background: #e2e8f0; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: 0.3s; }
+        .tab.active { background: var(--blue); color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
 
-        .staircase-scroll { overflow-x: auto; background: #f8fafc; border-radius: 15px; padding: 20px; margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        .staircase { display: flex; align-items: flex-end; justify-content: center; min-width: 800px; height: 180px; gap: 10px; }
-        .step { flex: 1; background: #94a3b8; border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem; transition: 0.4s; min-height: 40px; position: relative; }
-        .step.start { background: var(--primary); height: 100% !important; box-shadow: 0 0 20px rgba(37,99,235,0.4); }
-        .step.end { background: var(--accent); height: 100% !important; box-shadow: 0 0 20px rgba(245,158,11,0.4); }
+        .staircase { display: flex; align-items: flex-end; justify-content: center; height: 280px; gap: 8px; margin: 20px 0; background: #f1f5f9; padding: 20px; border-radius: 20px; overflow-x: auto; }
+        .step { flex: 1; background: #cbd5e1; border-radius: 8px 8px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 10px; transition: 0.3s; min-width: 90px; border: 1px solid #94a3b8; }
+        .step.active { background: var(--orange); color: white; border-color: #d97706; }
+        .step span { font-weight: 900; font-size: 1.1rem; margin-bottom: 5px; }
+        .step small { font-size: 0.65rem; text-align: center; padding: 0 4px; line-height: 1.2; font-weight: 600; }
 
-        .calc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f1f5f9; padding: 20px; border-radius: 20px; }
-        input, select { padding: 14px; border: 2px solid #cbd5e0; border-radius: 12px; font-size: 1rem; font-weight: bold; width: 100%; outline: none; }
-        input:focus { border-color: var(--primary); }
-
-        .result-box { grid-column: span 3; background: white; padding: 25px; border-radius: 15px; text-align: center; border: 3px solid var(--primary); margin-top: 10px; }
-        #resText { font-size: 2rem; font-weight: 900; color: var(--primary); margin-bottom: 15px; word-break: break-all; }
+        .controls { background: #f1f5f9; padding: 20px; border-radius: 20px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center; border: 1px solid #e2e8f0; }
+        select, input { padding: 12px; border-radius: 10px; border: 2px solid #cbd5e1; font-weight: bold; font-size: 1rem; color: var(--blue); outline: none; }
         
-        .expl-card { text-align: left; background: #fffbeb; border-left: 5px solid var(--accent); padding: 15px; border-radius: 8px; font-size: 0.95rem; line-height: 1.5; }
-        .history { margin-top: 30px; border-top: 2px solid #e2e8f0; padding-top: 20px; }
-        .hist-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; color: #64748b; }
+        .puzzle-box { margin-top: 25px; padding: 25px; background: #f0fdf4; border-radius: 20px; border-left: 8px solid var(--green); box-shadow: 0 4px 15px rgba(16,185,129,0.1); }
+        .big-text { font-size: 1.5rem; color: #166534; font-weight: 700; line-height: 1.5; }
+        .highlight { color: var(--blue); text-decoration: underline; font-weight: 900; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🚀 Scărița Fizicii Interactivă</h1>
-    <div class="tabs" id="tabsBox"></div>
+<div class="app">
+    <h1 style="text-align:center; color:var(--blue); margin-top:0; text-transform: uppercase; letter-spacing: 1px;">📐 Fizica: Din ce e făcută unitatea?</h1>
+    
+    <div class="tabs" id="tabList"></div>
 
-    <div class="staircase-scroll">
-        <div class="staircase" id="stairVisual"></div>
+    <div class="staircase" id="stairDisplay"></div>
+
+    <div class="controls">
+        <input type="number" id="numInput" value="1" style="width:80px" oninput="run()">
+        <select id="selectFrom" onchange="run()"></select>
+        <span style="font-size: 1.5rem;">➡️</span>
+        <select id="selectTo" onchange="run()"></select>
     </div>
 
-    <div class="calc-grid">
-        <input type="number" id="numIn" value="1" oninput="calculate()">
-        <select id="selFrom" onchange="calculate()"></select>
-        <select id="selTo" onchange="calculate()"></select>
-
-        <div class="result-box">
-            <div id="resText">1 m = 1 m</div>
-            <div class="expl-card" id="explBox"></div>
-        </div>
-    </div>
-
-    <div class="history">
-        <h4 style="margin-bottom:10px">🕒 Istoric Conversii:</h4>
-        <div id="histBox"></div>
+    <div class="puzzle-box">
+        <div id="puzzleOutput" class="big-text">Selectează unitățile...</div>
     </div>
 </div>
 
 <script>
-    const DATA = {
-        "Lungime": { units: ["km", "hm", "dam", "m", "dm", "cm", "mm"], factor: 10 },
-        "Masă": { units: ["t", "q", "kg", "hg", "dag", "g", "dg", "cg", "mg"], factor: 10 },
-        "Suprafață": { units: ["km²", "hm²(ha)", "dam²(ar)", "m²", "dm²", "cm²", "mm²"], factor: 100 },
-        "Volum (m³)": { units: ["km³", "hm³", "dam³", "m³", "dm³", "cm³", "mm³"], factor: 1000 },
-        "Capacitate (L)": { units: ["kl", "hl", "dal", "l", "dl", "cl", "ml"], factor: 10 },
-        "Energie (J)": { units: ["kJ", "hJ", "daJ", "J", "dJ", "cJ", "mJ"], factor: 10 },
-        "Forță (N)": { units: ["kN", "hN", "daN", "N", "dN", "cN", "mN"], factor: 10 },
-        "Putere (W)": { units: ["kW", "hW", "daW", "W", "dW", "cW", "mW"], factor: 10 }
+    const CONFIG = {
+        "Lungime": {
+            factor: 10,
+            data: [
+                { u: "km", o: "un Traseu de 15 min" }, { u: "hm", o: "un Stadion" }, { u: "dam", o: "un Autobuz" },
+                { u: "m", o: "o Chitară" }, { u: "dm", o: "o Palmă" }, { u: "cm", o: "o Pastilă" }, { u: "mm", o: "un Card" }
+            ]
+        },
+        "Masă": {
+            factor: 10,
+            data: [
+                { u: "t", o: "un Elefant" }, { u: "q", o: "un Sac de grâu" }, { u: "kg", o: "o Sticlă de lapte" },
+                { u: "hg", o: "un Măr" }, { u: "dag", o: "o Bomboană" }, { u: "g", o: "o Agrafă" },
+                { u: "dg", o: "un Bob de orez" }, { u: "cg", o: "un Praf de sare" }, { u: "mg", o: "o Furnică" }
+            ]
+        },
+        "Suprafață (x100)": {
+            factor: 100,
+            data: [
+                { u: "km²", o: "un Oraș mic" }, { u: "ha", o: "un Teren de fotbal" }, { u: "ar", o: "o Grădină" },
+                { u: "m²", o: "un Dormitor" }, { u: "dm²", o: "un Laptop" }, { u: "cm²", o: "o Monedă" }, { u: "mm²", o: "un Vârf de ac" }
+            ]
+        },
+        "Volum (x1000)": {
+            factor: 1000,
+            data: [
+                { u: "km³", o: "un Munte" }, { u: "hm³", o: "un Stadion plin" }, { u: "dam³", o: "un Bloc" },
+                { u: "m³", o: "o Cutie TV mare" }, { u: "dm³", o: "un Pahar" }, { u: "cm³", o: "un Zar" }, { u: "mm³", o: "o Picătură" }
+            ]
+        },
+        "Energie": {
+            factor: 10,
+            data: [
+                { u: "kJ", o: "un Șut de fotbalist" }, { u: "hJ", o: "o Săritură" }, { u: "daJ", o: "o Bătaie din palme" },
+                { u: "J", o: "o Scânteie" }, { u: "dJ", o: "un Clipit" }, { u: "cJ", o: "o Mișcare de deget" }, { u: "mJ", o: "o Albină care zboară" }
+            ]
+        }
     };
 
-    let currentCat = "Lungime";
-    let history = [];
+    let activeCat = "Lungime";
 
-    function setup() {
-        const tBox = document.getElementById('tabsBox');
-        tBox.innerHTML = "";
-        Object.keys(DATA).forEach(cat => {
-            const b = document.createElement('button');
-            b.className = `tab-btn ${cat === currentCat ? 'active' : ''}`;
-            b.innerText = cat;
-            b.onclick = () => { currentCat = cat; setup(); };
-            tBox.appendChild(b);
+    function build() {
+        const tabs = document.getElementById('tabList');
+        tabs.innerHTML = "";
+        Object.keys(CONFIG).forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'tab' + (cat === activeCat ? ' active' : '');
+            btn.innerText = cat;
+            btn.onclick = () => { activeCat = cat; build(); };
+            tabs.appendChild(btn);
         });
 
-        const f = document.getElementById('selFrom');
-        const t = document.getElementById('selTo');
+        const f = document.getElementById('selectFrom');
+        const t = document.getElementById('selectTo');
         f.innerHTML = ""; t.innerHTML = "";
-        DATA[currentCat].units.forEach((u, i) => {
-            f.options.add(new Option(u, i));
-            t.options.add(new Option(u, i));
+        CONFIG[activeCat].data.forEach((d, i) => {
+            f.options.add(new Option(d.u, i));
+            t.options.add(new Option(d.u, i));
         });
-        t.selectedIndex = DATA[currentCat].units.length - 1;
-        calculate(false);
+        t.selectedIndex = CONFIG[activeCat].data.length - 1;
+        run();
     }
 
-    function calculate(save = true) {
-        const val = parseFloat(document.getElementById('numIn').value) || 0;
-        const fIdx = parseInt(document.getElementById('selFrom').value);
-        const tIdx = parseInt(document.getElementById('selTo').value);
-        const config = DATA[currentCat];
+    function run() {
+        const val = document.getElementById('numInput').value || 0;
+        const fIdx = parseInt(document.getElementById('selectFrom').value);
+        const tIdx = parseInt(document.getElementById('selectTo').value);
+        const cat = CONFIG[activeCat];
 
-        // Scărița
-        const sVisual = document.getElementById('stairVisual');
-        sVisual.innerHTML = "";
-        config.units.forEach((u, i) => {
-            const d = document.createElement('div');
-            d.className = 'step' + (i === fIdx ? ' start' : '') + (i === tIdx ? ' end' : '');
-            d.style.height = `${40 + (config.units.length - i) * 15}px`;
-            d.innerText = u;
-            sVisual.appendChild(d);
+        // Randare vizuală scăriță
+        const stair = document.getElementById('stairDisplay');
+        stair.innerHTML = "";
+        cat.data.forEach((d, i) => {
+            const step = document.createElement('div');
+            step.className = 'step' + (i === fIdx || i === tIdx ? ' active' : '');
+            step.style.height = `${(cat.data.length - i) * 28 + 45}px`;
+            step.innerHTML = `<span>${d.u}</span><small>${d.o}</small>`;
+            stair.appendChild(step);
         });
 
-        // Matematică
-        let steps = Math.abs(tIdx - fIdx);
-        let totalFactor = Math.pow(config.factor, steps);
-        let result = fIdx < tIdx ? val * totalFactor : val / totalFactor;
+        // Logica de calcul "Rețetă"
+        let idxM = Math.min(fIdx, tIdx);
+        let idxS = Math.max(fIdx, tIdx);
+        let ratio = Math.pow(cat.factor, idxS - idxM);
+        let totalPiese = (ratio * val).toLocaleString('ro-RO');
 
-        let resFinal = `${val} ${config.units[fIdx]} = ${result.toLocaleString('ro-RO')} ${config.units[tIdx]}`;
-        document.getElementById('resText').innerText = resFinal;
+        const mare = cat.data[idxM].o;
+        const mica = cat.data[idxS].o;
 
-        // Explicație
-        let op = fIdx < tIdx ? "înmulțim (×)" : "împărțim (÷)";
-        document.getElementById('explBox').innerHTML = 
-            `<b>Analiză:</b> Ai ${fIdx < tIdx ? 'coborât' : 'urcat'} <b>${steps} trepte</b>.<br>` +
-            `Fiecare treaptă pe scara <b>${currentCat}</b> valorează <b>${config.factor}</b>.<br>` +
-            `<b>Calcul:</b> ${val} ${op} ${config.factor}<sup>${steps}</sup> (${totalFactor.toLocaleString()}) = <b>${result.toLocaleString('ro-RO')}</b>`;
-
-        if(save && val !== 0) {
-            if(history[0] !== resFinal) {
-                history.unshift(resFinal);
-                if(history.length > 5) history.pop();
-                document.getElementById('histBox').innerHTML = history.map(h => `<div class="hist-item">${h} <span>✔</span></div>`).join('');
-            }
-        }
+        document.getElementById('puzzleOutput').innerHTML = 
+            `🧠 <b>Rețeta de construcție:</b><br>
+            Pentru a umple <span class="highlight">${val} x [${mare}]</span>,<br>
+            ai nevoie de fix <b>${totalPiese}</b> piese de tip <span class="highlight">[${mica}]</span>!`;
     }
 
-    setup();
+    build();
 </script>
 </body>
 </html>
