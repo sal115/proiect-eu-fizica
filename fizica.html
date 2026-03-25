@@ -24,6 +24,9 @@
         .puzzle-box { margin-top: 25px; padding: 25px; background: #f0fdf4; border-radius: 20px; border-left: 8px solid var(--green); box-shadow: 0 4px 15px rgba(16,185,129,0.1); }
         .big-text { font-size: 1.5rem; color: #166534; font-weight: 700; line-height: 1.5; }
         .highlight { color: var(--blue); text-decoration: underline; font-weight: 900; }
+
+        .math-logic { margin-top: 15px; padding: 15px; background: #fffbeb; border-radius: 12px; border: 1px dashed #f59e0b; color: #92400e; font-size: 1rem; }
+        .formula-style { font-family: 'Courier New', monospace; font-weight: bold; background: #fef3c7; padding: 2px 5px; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -36,7 +39,7 @@
     <div class="staircase" id="stairDisplay"></div>
 
     <div class="controls">
-        <input type="number" id="numInput" value="1" style="width:80px" oninput="run()">
+        <input type="number" id="numInput" value="1" style="width:100px" oninput="run()">
         <select id="selectFrom" onchange="run()"></select>
         <span style="font-size: 1.5rem;">➡️</span>
         <select id="selectTo" onchange="run()"></select>
@@ -44,6 +47,7 @@
 
     <div class="puzzle-box">
         <div id="puzzleOutput" class="big-text">Selectează unitățile...</div>
+        <div id="mathExplanation" class="math-logic" style="display:none;"></div>
     </div>
 </div>
 
@@ -107,40 +111,55 @@
             f.options.add(new Option(d.u, i));
             t.options.add(new Option(d.u, i));
         });
-        t.selectedIndex = CONFIG[activeCat].data.length - 1;
+        t.selectedIndex = Math.min(1, CONFIG[activeCat].data.length - 1);
         run();
     }
 
     function run() {
-        const val = document.getElementById('numInput').value || 0;
+        const val = parseFloat(document.getElementById('numInput').value) || 0;
         const fIdx = parseInt(document.getElementById('selectFrom').value);
         const tIdx = parseInt(document.getElementById('selectTo').value);
         const cat = CONFIG[activeCat];
 
-        // Randare vizuală scăriță
         const stair = document.getElementById('stairDisplay');
         stair.innerHTML = "";
         cat.data.forEach((d, i) => {
             const step = document.createElement('div');
             step.className = 'step' + (i === fIdx || i === tIdx ? ' active' : '');
-            step.style.height = `${(cat.data.length - i) * 28 + 45}px`;
+            step.style.height = `${(cat.data.length - i) * 25 + 45}px`;
             step.innerHTML = `<span>${d.u}</span><small>${d.o}</small>`;
             stair.appendChild(step);
         });
 
-        // Logica de calcul "Rețetă"
-        let idxM = Math.min(fIdx, tIdx);
-        let idxS = Math.max(fIdx, tIdx);
-        let ratio = Math.pow(cat.factor, idxS - idxM);
-        let totalPiese = (ratio * val).toLocaleString('ro-RO');
+        const distanta = tIdx - fIdx; 
+        const ratio = Math.pow(cat.factor, Math.abs(distanta));
+        let rezultat;
+        let explicatie = "";
 
-        const mare = cat.data[idxM].o;
-        const mica = cat.data[idxS].o;
+        if (distanta > 0) {
+            rezultat = val * ratio;
+            explicatie = `Coborâm <b>${distanta}</b> trepte. Înmulțim cu <span class="formula-style">${cat.factor}<sup>${distanta}</sup></span>.`;
+        } else if (distanta < 0) {
+            rezultat = val / ratio;
+            explicatie = `Urcăm <b>${Math.abs(distanta)}</b> trepte. Împărțim la <span class="formula-style">${cat.factor}<sup>${Math.abs(distanta)}</sup></span>.`;
+        } else {
+            rezultat = val;
+            explicatie = "Unitățile sunt identice.";
+        }
 
+        // PĂSTREAZĂ OBIECTELE ORIGINALE ÎN TEXT (ex: o Sticlă de lapte)
+        const obiectStart = cat.data[fIdx].o;
+        const obiectFinal = cat.data[tIdx].o;
+        
         document.getElementById('puzzleOutput').innerHTML = 
             `🧠 <b>Rețeta de construcție:</b><br>
-            Pentru a umple <span class="highlight">${val} x [${mare}]</span>,<br>
-            ai nevoie de fix <b>${totalPiese}</b> piese de tip <span class="highlight">[${mica}]</span>!`;
+            Pentru <span class="highlight">${val} x [${obiectStart}]</span>,<br>
+            obții <b style="color:var(--orange)">${rezultat.toLocaleString('ro-RO', {maximumFractionDigits: 6})}</b> piese de tip <span class="highlight">[${obiectFinal}]</span>!`;
+
+        const expDiv = document.getElementById('mathExplanation');
+        expDiv.style.display = "block";
+        expDiv.innerHTML = `💡 <b>Cum am calculat:</b> ${explicatie}<br>
+        <span class="formula-style">Calcul: ${val} ${distanta >= 0 ? '×' : '÷'} ${ratio.toLocaleString()} = ${rezultat.toLocaleString('ro-RO', {maximumFractionDigits: 6})}</span>`;
     }
 
     build();
