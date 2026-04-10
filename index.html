@@ -56,37 +56,37 @@
         "Lungime": {
             factor: 10,
             data: [
-                { u: "km", o: "un Traseu de 15 min" }, { u: "hm", o: "un Stadion" }, { u: "dam", o: "un Autobuz" },
-                { u: "m", o: "o Chitară" }, { u: "dm", o: "o Palmă" }, { u: "cm", o: "o Pastilă" }, { u: "mm", o: "un Card" }
+                { u: "km", o: "un Traseu de 15 min", p: 3 }, { u: "hm", o: "un Stadion", p: 2 }, { u: "dam", o: "un Autobuz", p: 1 },
+                { u: "m", o: "o Chitară", p: 0 }, { u: "dm", o: "o Palmă", p: -1 }, { u: "cm", o: "o Pastilă", p: -2 }, { u: "mm", o: "un Card", p: -3 }
             ]
         },
         "Masă": {
             factor: 10,
             data: [
-                { u: "t", o: "un Elefant" }, { u: "q", o: "un Sac de grâu" }, { u: "kg", o: "o Sticlă de lapte" },
-                { u: "hg", o: "un Măr" }, { u: "dag", o: "o Bomboană" }, { u: "g", o: "o Agrafă" },
-                { u: "dg", o: "un Bob de orez" }, { u: "cg", o: "un Praf de sare" }, { u: "mg", o: "o Furnică" }
+                { u: "t", o: "un Elefant", p: 6 }, { u: "q", o: "un Sac de grâu", p: 5 }, { u: "kg", o: "o Sticlă de lapte", p: 3 },
+                { u: "hg", o: "un Măr", p: 2 }, { u: "dag", o: "o Bomboană", p: 1 }, { u: "g", o: "o Agrafă", p: 0 },
+                { u: "dg", o: "un Bob de orez", p: -1 }, { u: "cg", o: "un Praf de sare", p: -2 }, { u: "mg", o: "o Furnică", p: -3 }
             ]
         },
         "Suprafață (x100)": {
             factor: 100,
             data: [
-                { u: "km²", o: "un Oraș mic" }, { u: "ha", o: "un Teren de fotbal" }, { u: "ar", o: "o Grădină" },
-                { u: "m²", o: "un Dormitor" }, { u: "dm²", o: "un Laptop" }, { u: "cm²", o: "o Monedă" }, { u: "mm²", o: "un Vârf de ac" }
+                { u: "km²", o: "un Oraș mic", p: 3 }, { u: "ha", o: "un Teren de fotbal", p: 2 }, { u: "ar", o: "o Grădină", p: 1 },
+                { u: "m²", o: "un Dormitor", p: 0 }, { u: "dm²", o: "un Laptop", p: -1 }, { u: "cm²", o: "o Monedă", p: -2 }, { u: "mm²", o: "un Vârf de ac", p: -3 }
             ]
         },
         "Volum (x1000)": {
             factor: 1000,
             data: [
-                { u: "km³", o: "un Munte" }, { u: "hm³", o: "un Stadion plin" }, { u: "dam³", o: "un Bloc" },
-                { u: "m³", o: "o Cutie TV mare" }, { u: "dm³", o: "un Pahar" }, { u: "cm³", o: "un Zar" }, { u: "mm³", o: "o Picătură" }
+                { u: "km³", o: "un Munte", p: 3 }, { u: "hm³", o: "un Stadion plin", p: 2 }, { u: "dam³", o: "un Bloc", p: 1 },
+                { u: "m³", o: "o Cutie TV mare", p: 0 }, { u: "dm³", o: "un Pahar", p: -1 }, { u: "cm³", o: "un Zar", p: -2 }, { u: "mm³", o: "o Picătură", p: -3 }
             ]
         },
         "Energie": {
             factor: 10,
             data: [
-                { u: "kJ", o: "un Șut de fotbalist" }, { u: "hJ", o: "o Săritură" }, { u: "daJ", o: "o Bătaie din palme" },
-                { u: "J", o: "o Scânteie" }, { u: "dJ", o: "un Clipit" }, { u: "cJ", o: "o Mișcare de deget" }, { u: "mJ", o: "o Albină care zboară" }
+                { u: "kJ", o: "un Șut de fotbalist", p: 3 }, { u: "hJ", o: "o Săritură", p: 2 }, { u: "daJ", o: "o Bătaie din palme", p: 1 },
+                { u: "J", o: "o Scânteie", p: 0 }, { u: "dJ", o: "un Clipit", p: -1 }, { u: "cJ", o: "o Mișcare de deget", p: -2 }, { u: "mJ", o: "o Albină care zboară", p: -3 }
             ]
         }
     };
@@ -121,17 +121,31 @@
         const tIdx = parseInt(document.getElementById('selectTo').value);
         const cat = CONFIG[activeCat];
 
+        const fP = cat.data[fIdx].p;
+        const tP = cat.data[tIdx].p;
+
         const stair = document.getElementById('stairDisplay');
         stair.innerHTML = "";
-        cat.data.forEach((d, i) => {
-            const step = document.createElement('div');
-            step.className = 'step' + (i === fIdx || i === tIdx ? ' active' : '');
-            step.style.height = `${(cat.data.length - i) * 25 + 45}px`;
-            step.innerHTML = `<span>${d.u}</span><small>${d.o}</small>`;
-            stair.appendChild(step);
-        });
+        
+        const maxP = Math.max(...cat.data.map(d => d.p));
+        const minP = Math.min(...cat.data.map(d => d.p));
 
-        const distanta = tIdx - fIdx; 
+        for (let p = maxP; p >= minP; p--) {
+            const unit = cat.data.find(d => d.p === p);
+            const step = document.createElement('div');
+            step.className = 'step';
+            if (unit && (unit.p === fP || unit.p === tP)) step.classList.add('active');
+            step.style.height = `${(p - minP + 1) * 25 + 45}px`;
+            
+            if (unit) {
+                step.innerHTML = `<span>${unit.u}</span><small>${unit.o}</small>`;
+            } else {
+                step.innerHTML = `<span style="opacity:0.3">-</span><small style="opacity:0.3">pas intermediar</small>`;
+            }
+            stair.appendChild(step);
+        }
+
+        const distanta = fP - tP; 
         const ratio = Math.pow(cat.factor, Math.abs(distanta));
         let rezultat;
         let explicatie = "";
